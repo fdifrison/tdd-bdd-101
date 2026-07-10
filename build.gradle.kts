@@ -20,6 +20,11 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    exclude(group = "org.mockito", module = "mockito-core")
+    exclude(group = "org.mockito", module = "mockito-junit-jupiter")
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-h2console")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -35,6 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.14.11")
+    testImplementation("com.ninja-squad:springmockk:5.0.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

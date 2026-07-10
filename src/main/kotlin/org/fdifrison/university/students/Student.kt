@@ -6,6 +6,6 @@ import java.util.*
 data class Student private constructor(val id: UUID) {
     companion object {
         @JvmStatic // if called from java code remove the .Companion.
-        fun register() = Student(UUID.randomUUID())
+        fun register(id: UUID) = Student(id)
     }
 }

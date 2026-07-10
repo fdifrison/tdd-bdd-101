@@ -1,5 +1,6 @@
 package org.fdifrison.university.student
 
+import com.ninjasquad.springmockk.MockkBean
 import org.assertj.core.api.Assertions.assertThat
 import org.fdifrison.university.students.StudentController
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,10 @@ class StudentTests {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
+
+    @MockkBean
+    private lateinit var idGenerator: IdGenerator
+
 
     @Test
     fun `given i am a student, when i register`() {
