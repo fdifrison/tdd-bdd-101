@@ -23,6 +23,7 @@ class StudentTests {
     @MockkBean
     private lateinit var idGenerator: IdGenerator
 
+    private val baseUrl: String = "http://localhost"
 
     @Test
     fun `given i am a student, when i register`() {
@@ -34,7 +35,7 @@ class StudentTests {
             .post()
             .uri("/students").exchange()
             .expectStatus().isCreated
-            .expectHeader().location("/students/$expectedId")
+            .expectHeader().location("$baseUrl/students/$expectedId")
             .expectBody<StudentResponse>()
             .value { response ->
                 requireNotNull(response)
