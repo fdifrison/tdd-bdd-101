@@ -5,6 +5,7 @@ import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
 import org.fdifrison.university.students.StudentController
 import org.fdifrison.university.utils.IdGenerator
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,6 +50,26 @@ class StudentTests {
                     .isNotBlank()
                     .isEqualTo(studentRequest.name)
             }
+
+    }
+
+    @Test
+    fun `given a student have been registered student, i can retrieve its information`() {
+
+        val expectedId = UUID.randomUUID()
+        val studentRequest = RegisterStudentRequest("John")
+        every { idGenerator.generate() } returns expectedId
+
+        restTestClient
+            .post()
+            .uri("/students")
+            .body(studentRequest).exchange()
+
+
+        restTestClient
+            .get().uri("/students/$expectedId")
+            .exchange().expectStatus().isOk
+
 
     }
 
