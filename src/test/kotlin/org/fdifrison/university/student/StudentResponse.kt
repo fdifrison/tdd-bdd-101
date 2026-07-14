@@ -6,10 +6,10 @@ import java.util.*
 data class StudentResponse(val id: UUID, val name: String)
 
 
-fun StudentResponse.hasValidId() {
+fun StudentResponse.hasValidIdAndEqualTo(expectedId: UUID) {
     assertThat(this.id)
         .isNotNull()
-        .isNotEqualTo(UUID(0L, 0L))
+        .isEqualTo(expectedId)
 }
 
 fun StudentResponse.nameIsValidAndEqualTo(name: String) {
