@@ -29,11 +29,12 @@ class StudentTests {
     fun `given i am a student, when i register`() {
 
         val expectedId = UUID.randomUUID()
+        val studentRequest = RegisterStudentRequest("John")
         every { idGenerator.generate() } returns expectedId
 
         restTestClient
             .post()
-            .uri("/students").exchange()
+            .uri("/students").body(studentRequest).exchange()
             .expectStatus().isCreated
             .expectHeader().location("$baseUrl/students/$expectedId")
             .expectBody<StudentResponse>()
@@ -42,6 +43,7 @@ class StudentTests {
                 assertThat(response.id)
                     .isNotNull()
                     .isNotEqualTo(UUID(0L, 0L))
+                assertThat { response.name == studentRequest.name }
             }
 
     }

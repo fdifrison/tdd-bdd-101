@@ -2,4 +2,4 @@ package org.fdifrison.university.student
 
 import java.util.*
 
-data class StudentResponse(val id: UUID)
+data class StudentResponse(val id: UUID, val name: String)
