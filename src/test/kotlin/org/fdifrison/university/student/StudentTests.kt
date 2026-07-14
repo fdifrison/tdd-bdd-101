@@ -5,13 +5,14 @@ import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
 import org.fdifrison.university.students.StudentController
 import org.fdifrison.university.utils.IdGenerator
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.web.servlet.client.RestTestClient
 import org.springframework.test.web.servlet.client.expectBody
 import java.util.*
-import kotlin.test.Test
 
 @WebMvcTest(controllers = [StudentController::class])
 @AutoConfigureRestTestClient
@@ -25,11 +26,12 @@ class StudentTests {
 
     private val baseUrl: String = "http://localhost"
 
-    @Test
-    fun `given i am a student, when i register`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["Jane", "John", "Alice"])
+    fun `given i am a student, when i register`(name: String) {
 
         val expectedId = UUID.randomUUID()
-        val studentRequest = RegisterStudentRequest("John")
+        val studentRequest = RegisterStudentRequest(name)
         every { idGenerator.generate() } returns expectedId
 
         restTestClient
@@ -43,7 +45,9 @@ class StudentTests {
                 assertThat(response.id)
                     .isNotNull()
                     .isNotEqualTo(UUID(0L, 0L))
-                assertThat { response.name == studentRequest.name }
+                assertThat(response.name)
+                    .isNotBlank()
+                    .isEqualTo(studentRequest.name)
             }
 
     }
