@@ -19,7 +19,7 @@ import java.util.*
 
 @WebMvcTest(controllers = [StudentController::class])
 @AutoConfigureRestTestClient
-class StudentTests {
+class StudentControllerTests {
 
     @Autowired
     private lateinit var restTestClient: RestTestClient
@@ -64,7 +64,7 @@ class StudentTests {
 
         val studentById = getStudentById(expectedId)
         studentById.expectStatus().isOk
-            .returnResult<Student>().responseBody.run {
+            .returnResult<StudentResponse>().responseBody.run {
                 requireNotNull(this)
                 assertThat(this.id).isEqualTo(expectedStudent.id)
                 assertThat(this.name).isEqualTo(expectedStudent.name)
