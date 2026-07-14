@@ -2,7 +2,6 @@ package org.fdifrison.university.student
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.assertj.core.api.Assertions.assertThat
 import org.fdifrison.university.students.StudentController
 import org.fdifrison.university.utils.IdGenerator
 import org.junit.jupiter.api.Test
@@ -26,6 +25,7 @@ class StudentTests {
     private lateinit var idGenerator: IdGenerator
 
     private val baseUrl: String = "http://localhost"
+    private val studentUrl: String = "/students"
 
     @ParameterizedTest
     @ValueSource(strings = ["Jane", "John", "Alice"])
@@ -35,23 +35,20 @@ class StudentTests {
         val studentRequest = RegisterStudentRequest(name)
         every { idGenerator.generate() } returns expectedId
 
-        restTestClient
-            .post()
-            .uri("/students").body(studentRequest).exchange()
+        val registerStudent = registerStudent(studentRequest)
+
+        registerStudent
             .expectStatus().isCreated
-            .expectHeader().location("$baseUrl/students/$expectedId")
+            .expectHeader().location("$baseUrl$studentUrl/$expectedId")
             .expectBody<StudentResponse>()
             .value { response ->
                 requireNotNull(response)
-                assertThat(response.id)
-                    .isNotNull()
-                    .isNotEqualTo(UUID(0L, 0L))
-                assertThat(response.name)
-                    .isNotBlank()
-                    .isEqualTo(studentRequest.name)
+                response.hasValidId()
+                response.nameIsValidAndEqualTo(name)
             }
 
     }
+
 
     @Test
     fun `given a student have been registered student, i can retrieve its information`() {
@@ -60,18 +57,18 @@ class StudentTests {
         val studentRequest = RegisterStudentRequest("John")
         every { idGenerator.generate() } returns expectedId
 
-        restTestClient
-            .post()
-            .uri("/students")
-            .body(studentRequest).exchange()
-
-
-        restTestClient
-            .get().uri("/students/$expectedId")
-            .exchange().expectStatus().isOk
+        registerStudent(studentRequest)
+        val studentById = getStudentById(expectedId)
+        studentById.expectStatus().isOk
 
 
     }
+
+    private fun getStudentById(expectedId: UUID?): RestTestClient.ResponseSpec =
+        restTestClient.get().uri("$studentUrl/$expectedId").exchange()
+
+    private fun registerStudent(studentRequest: RegisterStudentRequest): RestTestClient.ResponseSpec =
+        restTestClient.post().uri(studentUrl).body(studentRequest).exchange()
 
 
 }
