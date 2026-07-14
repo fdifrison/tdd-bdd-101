@@ -9,7 +9,8 @@ import java.util.*
 
 @RestController
 class StudentController(
-    private val idGenerator: IdGenerator
+    private val idGenerator: IdGenerator,
+    private val studentService: IStudentService
 ) {
     @PostMapping("students")
     fun registerStudent(@RequestBody @Valid request: RegistrationStudentRequest): ResponseEntity<Student> {
@@ -23,7 +24,8 @@ class StudentController(
     }
 
     @GetMapping("students/{id}")
-    fun getStudent(@PathVariable id: UUID) {
-
+    fun getStudent(@PathVariable id: UUID) : ResponseEntity<Student> {
+        val student = studentService.getStudent(id)
+        return ResponseEntity.ok(student)
     }
 }
